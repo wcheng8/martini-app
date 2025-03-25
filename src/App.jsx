@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { Martinis } from './Martinis'
 import { Loading } from '../../04-fundamental-projects/02-tours/starter/src/Loading'
+import { Margaritas } from './Margaritas'
 
-const url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=martini'
+const martini_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=martini'
+const margarita_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [martinis, setMartinis] = useState([])
+  const [margaritas, setMargaritas] = useState([])
 
   const removeMartini = (idDrink) => {
     const newMartinis = martinis.filter((martini) => martini.idDrink != idDrink)
@@ -16,10 +19,13 @@ function App() {
   const fetchData = async() => {
     setIsLoading(true)
     try{
-      const resp = await fetch(url)
+      const resp = await fetch(martini_url)
+      const respmar = await fetch(margarita_url)
       const martinisjson = await resp.json()
+      const margaritajson = await respmar.json()
       const martinis = martinisjson.drinks
-      console.log(martinis)
+      const margaritas = margaritajson.drinks
+      setMargaritas(margaritas)
       setMartinis(martinis)
     }catch(error){
       console.log(error)
@@ -50,6 +56,8 @@ function App() {
   }
   return (
   <>
+    <h2>Cocktail apps</h2>
+    <Margaritas margaritas = {margaritas}/>
     <Martinis martinis = {martinis} removeMartini = {removeMartini} />
   </>
   )
