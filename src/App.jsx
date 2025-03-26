@@ -3,6 +3,8 @@ import './App.css'
 import { Martinis } from './Martinis'
 import { Loading } from '../../04-fundamental-projects/02-tours/starter/src/Loading'
 import { Margaritas } from './Margaritas'
+import {squestions} from './data'
+import { Questions } from './Questions'
 
 const martini_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=martini'
 const margarita_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita'
@@ -11,6 +13,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [martinis, setMartinis] = useState([])
   const [margaritas, setMargaritas] = useState([])
+  const [questions, setQuestions] = useState(squestions)
 
   const removeMartini = (idDrink) => {
     const newMartinis = martinis.filter((martini) => martini.idDrink != idDrink)
@@ -55,11 +58,12 @@ function App() {
     )
   }
   return (
-  <>
-    <h2>Cocktail apps</h2>
+  <main>
+    <h1>Cocktail apps</h1>
+    <Questions questions = {questions}/>
     <Margaritas margaritas = {margaritas}/>
     <Martinis martinis = {martinis} removeMartini = {removeMartini} />
-  </>
+    </main>
   )
 }
 
