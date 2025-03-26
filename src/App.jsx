@@ -7,9 +7,11 @@ import {squestions, menu} from './data'
 import { Questions } from './Questions'
 import { Menu } from './Menu'
 import { Categories } from './Categories'
+import { Jobs } from './Jobs'
 
 const martini_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=martini'
 const margarita_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita'
+const jobs_url = 'https://jobicy.com/api/v2/remote-jobs?count=5&tag=python'
 
 const tempCategory = menu.map((item) => item.category) 
 const tempSet = new Set(tempCategory)
@@ -22,9 +24,9 @@ function App() {
   const [questions, setQuestions] = useState(squestions)
   const [menuItems, setMenuItems] = useState(menu)
   const [categories, setCategories] = useState(allCategory)
+  const [jobs, setJobs] = useState([])
 
   const filterItems = (category) => {
-    console.log(category)
     if(category === 'all'){
       setMenuItems(menu)
       return
@@ -35,6 +37,25 @@ function App() {
   const removeMartini = (idDrink) => {
     const newMartinis = martinis.filter((martini) => martini.idDrink != idDrink)
     setMartinis(newMartinis)
+  }
+  const fetchJobs = async() => {
+    setIsLoading(true)
+    try{
+      const jobData = await fetch(jobs_url)
+      const jobJson = await jobData.json()
+      const jobs = jobJson.jobs
+
+      // add index to each item
+      const indexJobs = jobs.map((job,index) => ({
+        ...job, index: index //Make index start at 0
+      }))
+  
+      console.log(indexJobs)
+      setJobs(indexJobs)
+    }catch(error){
+      console.log(error)
+    }
+    setIsLoading(false)
   }
   const fetchData = async() => {
     setIsLoading(true)
@@ -53,9 +74,9 @@ function App() {
   setIsLoading(false)
   }
 
-
   useEffect(() => {
     fetchData()
+    fetchJobs()
   },[])
 
   if (isLoading){
@@ -74,14 +95,17 @@ function App() {
   //     </div>
   //   )
   // }
+
+
   return (
   <main>
     <h1>Cocktail apps</h1>
-    <Questions questions = {questions}/>
+    <Jobs jobs = {jobs}/>
+    {/* <Questions questions = {questions}/> */}
     {/* <Margaritas margaritas = {margaritas}/> */}
     {/* <Martinis martinis = {martinis} removeMartini = {removeMartini} /> */}
-    <Categories categories={categories} filterItems = {filterItems}  />
-    <Menu menuItems = {menuItems}/>
+    {/* <Categories categories={categories} filterItems = {filterItems}  /> */}
+    {/* <Menu menuItems = {menuItems}/> */}
     </main>
   )
 }
