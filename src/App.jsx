@@ -8,10 +8,13 @@ import { Questions } from './Questions'
 import { Menu } from './Menu'
 import { Categories } from './Categories'
 import { Jobs } from './Jobs'
+import { SwitchButton } from './SwitchButton'
+import { SlickCarousel } from './SlickCarousel'
 
 const martini_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=martini'
 const margarita_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita'
 const jobs_url = 'https://jobicy.com/api/v2/remote-jobs?count=5&tag=python'
+const quote_url = 'https://api.realinspire.live/v1/quotes/random?limit=5'
 
 const tempCategory = menu.map((item) => item.category) 
 const tempSet = new Set(tempCategory)
@@ -25,6 +28,8 @@ function App() {
   const [menuItems, setMenuItems] = useState(menu)
   const [categories, setCategories] = useState(allCategory)
   const [jobs, setJobs] = useState([])
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [quotes, setQuotes] = useState([])
 
   const filterItems = (category) => {
     if(category === 'all'){
@@ -38,6 +43,20 @@ function App() {
     const newMartinis = martinis.filter((martini) => martini.idDrink != idDrink)
     setMartinis(newMartinis)
   }
+
+  const fetchQuotes = async() => {
+    setIsLoading(true)
+    try{
+      const quotesData = await fetch(quote_url)
+      const quotesJson = await quotesData.json()
+      console.log(quotesJson)
+      setQuotes(quotesJson)
+    }catch(error){
+      console.log(error)
+    }
+    setIsLoading(false)
+  }
+
   const fetchJobs = async() => {
     setIsLoading(true)
     try{
@@ -75,8 +94,9 @@ function App() {
   }
 
   useEffect(() => {
-    fetchData()
-    fetchJobs()
+    fetchQuotes()
+    // fetchData()
+    // fetchJobs()
   },[])
 
   if (isLoading){
@@ -100,7 +120,9 @@ function App() {
   return (
   <main>
     <h1>Cocktail apps</h1>
-    <Jobs jobs = {jobs}/>
+    {/* <SwitchButton jobs = {jobs} currentIndex = {currentIndex} setCurrentIndex = {setCurrentIndex}/> */}
+    {/* <Jobs jobs = {jobs} currentIndex={currentIndex}/> */}
+    <SlickCarousel quotes = {quotes} />
     {/* <Questions questions = {questions}/> */}
     {/* <Margaritas margaritas = {margaritas}/> */}
     {/* <Martinis martinis = {martinis} removeMartini = {removeMartini} /> */}

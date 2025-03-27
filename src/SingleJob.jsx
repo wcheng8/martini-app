@@ -1,7 +1,7 @@
 import React from 'react'
 
-export const SingleJob = ({jobs}) => {
-    const {id, url, jobTitle, companyName, jobExcerpt, jobIndustry} = jobs[0]
+export const SingleJob = ({jobs, currentIndex}) => {
+    const {id, url, jobTitle, companyName, jobExcerpt, jobIndustry} = jobs[currentIndex]
     return (
     <div>
         <h4>{jobTitle}</h4>
