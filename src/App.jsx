@@ -10,6 +10,10 @@ import { Categories } from './Categories'
 import { Jobs } from './Jobs'
 import { SwitchButton } from './SwitchButton'
 import { SlickCarousel } from './SlickCarousel'
+import { Form } from './ColorApp/Form'
+import { ColorList } from './ColorApp/ColorList'
+import { ToastContainer, toast } from 'react-toastify'
+import Values from 'values.js';
 
 const martini_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=martini'
 const margarita_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita'
@@ -30,6 +34,7 @@ function App() {
   const [jobs, setJobs] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [quotes, setQuotes] = useState([])
+  const [colors, setColors] = useState(new Values('#f15025').all(20))
 
   const filterItems = (category) => {
     if(category === 'all'){
@@ -116,13 +121,26 @@ function App() {
   //   )
   // }
 
+  const addColor = (color) => {
+    try {
+      const colorarray = new Values(color).all(20)
+      setColors(colorarray)
+    } catch (error){
+      toast.error(error.message)
+    }
+  }
 
   return (
   <main>
     <h1>Cocktail apps</h1>
+    <h2>choose the color shade for your Cocktail</h2>
+    <ToastContainer position='top-center'/>
+    <Form addColor={addColor}/>
+    <ColorList colors={colors}/>
+
     {/* <SwitchButton jobs = {jobs} currentIndex = {currentIndex} setCurrentIndex = {setCurrentIndex}/> */}
     {/* <Jobs jobs = {jobs} currentIndex={currentIndex}/> */}
-    <SlickCarousel quotes = {quotes} />
+    {/* <SlickCarousel quotes = {quotes} /> */}
     {/* <Questions questions = {questions}/> */}
     {/* <Margaritas margaritas = {margaritas}/> */}
     {/* <Martinis martinis = {martinis} removeMartini = {removeMartini} /> */}
