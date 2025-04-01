@@ -14,6 +14,9 @@ import { Form } from './ColorApp/Form'
 import { ColorList } from './ColorApp/ColorList'
 import { ToastContainer, toast } from 'react-toastify'
 import Values from 'values.js';
+import { Items } from './todoist/Items'
+import { GroceryForm } from './todoist/GroceryForm'
+import { nanoid } from 'nanoid'
 
 const martini_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=martini'
 const margarita_url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita'
@@ -23,7 +26,10 @@ const quote_url = 'https://api.realinspire.live/v1/quotes/random?limit=5'
 const tempCategory = menu.map((item) => item.category) 
 const tempSet = new Set(tempCategory)
 const allCategory = ['all', ...tempSet]
-
+const defaultList = JSON.parse(localStorage.getItem('list')||'[]')
+const setLocalStorage = (items) => {
+  localStorage.setItem('list',JSON.stringify(items))
+}
 function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [martinis, setMartinis] = useState([])
@@ -35,6 +41,7 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [quotes, setQuotes] = useState([])
   const [colors, setColors] = useState(new Values('#f15025').all(20))
+  const [items, setItems] = useState(defaultList)
 
   const filterItems = (category) => {
     if(category === 'all'){
@@ -99,18 +106,18 @@ function App() {
   }
 
   useEffect(() => {
-    fetchQuotes()
+    // fetchQuotes()
     // fetchData()
     // fetchJobs()
   },[])
 
-  if (isLoading){
-    return (
-      <div>
-        <Loading />
-      </div>
-    )
-  }
+  // if (isLoading){
+  //   return (
+  //     <div>
+  //       <Loading />
+  //     </div>
+  //   )
+  // }
 
   // if(martinis.length == 0){
   //   return (
@@ -130,13 +137,50 @@ function App() {
     }
   }
 
+  const addItem = (itemName) => {
+    const newItem = {
+      name: itemName,
+      completed: false,
+      id: nanoid()
+    }
+    const newItems = [...items, newItem]
+    setItems(newItems)
+    setLocalStorage(newItems)
+    toast.success('item added to the list')
+  }
+
+  const removeItem = (itemId) => {
+    const newItems = items.filter((item) => item.id !== itemId)
+    setItems(newItems)
+    setLocalStorage(newItems)
+    toast.success('item deleted')
+  }
+
+  const editItem = (itemId) => {
+    const newItems = items.map((item) => {
+      if(item.id === itemId){
+        const newItem = {...item, completed: !item.completed}
+        return newItem
+      }
+      return item
+    })
+    setItems(newItems)
+    setLocalStorage(newItems)
+  }
+
   return (
   <main>
     <h1>Cocktail apps</h1>
-    <h2>choose the color shade for your Cocktail</h2>
+    <h2>Grocery list for the cocktails</h2>
+    <ToastContainer position='top-center' />
+    <GroceryForm addItem = {addItem}/>
+    <Items items = {items} removeItem = {removeItem} editItem = {editItem}/>
+
+
+    {/* <h2>choose the color shade for your Cocktail</h2>
     <ToastContainer position='top-center'/>
     <Form addColor={addColor}/>
-    <ColorList colors={colors}/>
+    <ColorList colors={colors}/> */}
 
     {/* <SwitchButton jobs = {jobs} currentIndex = {currentIndex} setCurrentIndex = {setCurrentIndex}/> */}
     {/* <Jobs jobs = {jobs} currentIndex={currentIndex}/> */}
